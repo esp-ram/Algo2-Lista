@@ -9,12 +9,23 @@
 #define A 5
 
 
-bool sumar_cinco_mostrar (void* dato,void* extra){
-    int cinco = 5;
+bool no_hace_nada(void* dato, void* extra){
+    return false;
+}
+
+
+bool suma_total(void*dato,void* total){
+    *(int*)total += *(int*)dato;
+    return true;
+}
+
+
+bool sumar_cinco(void* dato,void* extra){
     if (*(size_t*) extra >= 3){
         return false;
     }
-    printf("%d\n", *(int*)dato + cinco);
+    int cinco = 5;
+    *(int*)dato += cinco;
     *(size_t*)extra += 1;
     return true;
 }
@@ -409,7 +420,7 @@ void prueba_iterador_eliminar_medio(){
     lista_iter_destruir(itera);
     printf("nuevo iterador para comprobar que la lista mantuvo el orden\n");
     lista_iter_t* itera1 = lista_iter_crear(lis);
-    print_test("la lista mantuvo el orden",*(int*)lista_iter_ver_actual(itera1) == A);
+    print_test("la lista mantuvo el orden",*(int*)lista_iter_ver_actual(itera1) == a);
     print_test("el iterador avanza en la lista",lista_iter_avanzar(itera1));
     print_test("la lista mantuvo el orden",*(int*)lista_iter_ver_actual(itera1) == c);
     print_test("el iterador avanza en la lista",lista_iter_avanzar(itera1));
@@ -420,7 +431,7 @@ void prueba_iterador_eliminar_medio(){
 
 
 void prueba_interno_rango(){
-    printf("\nPRUEBA A ELIMINAR ELEMENTO EN MEDIO DE LA LISTA (I. EXTERNO)\n");
+    printf("\nPRUEBA A APLICAR UNA FUNCION A UN RANGO DE LA LISTA (I. INTERNO)\n");
     int a = 5;
     int b = 12;
     int c = 352;
@@ -435,21 +446,48 @@ void prueba_interno_rango(){
     print_test("insertar elemento en ultima posicion (primitiva de lista)",lista_insertar_ultimo(lis,&e));
     print_test("insertar elemento en ultima posicion (primitiva de lista)",lista_insertar_ultimo(lis,&f));
     size_t limite = 0;
-    printf("uso de funcion en iterador interno\n");
-    lista_iterar(lis,sumar_cinco_mostrar,&limite);
+    printf("uso de funcion en iterador interno (sumar 5 a los primeros 3 elementos)\n");
+    lista_iterar(lis,sumar_cinco,&limite);
+    printf("verificacion de la correcta modificacion de la lista\n");
+    lista_iter_t* itera1 = lista_iter_crear(lis);
+    print_test("la lista mantuvo el orden",*(int*)lista_iter_ver_actual(itera1) == 10);
+    print_test("el iterador avanza en la lista",lista_iter_avanzar(itera1));
+    print_test("la lista mantuvo el orden",*(int*)lista_iter_ver_actual(itera1) == 17);
+    print_test("el iterador avanza en la lista",lista_iter_avanzar(itera1));
+    print_test("la lista mantuvo el orden",*(int*)lista_iter_ver_actual(itera1) == 357);
+    print_test("el iterador avanza en la lista",lista_iter_avanzar(itera1));
+    print_test("la lista mantuvo el orden",*(int*)lista_iter_ver_actual(itera1) == d);
+    print_test("el iterador avanza en la lista",lista_iter_avanzar(itera1));
+    print_test("la lista mantuvo el orden",*(int*)lista_iter_ver_actual(itera1) == e);
+    print_test("el iterador avanza en la lista",lista_iter_avanzar(itera1));
+    print_test("la lista mantuvo el orden",*(int*)lista_iter_ver_actual(itera1) == f);
+    print_test("el iterador avanza en la lista",lista_iter_avanzar(itera1));
+    print_test("el iterador llega al final de la lista",lista_iter_al_final(itera1));
+    lista_iter_destruir(itera1);
     lista_destruir(lis,NULL);
 }
 
 
 void prueba_interno_completo(){
-    printf("\nPRUEBA A ELIMINAR ELEMENTO EN MEDIO DE LA LISTA (I. EXTERNO)\n");
+    printf("\nPRUEBA A APLICAR FUNCION A TODA LA LISTA (I. INTERNO)\n");
     int a = 5;
     int b = 12;
     int c = 352;
+    int d = 2431;
+    int e = 9;
+    int f = 98;
     lista_t* lis = lista_crear();
     print_test("insertar elemento en ultima posicion (primitiva de lista)",lista_insertar_ultimo(lis,&a));
     print_test("insertar elemento en ultima posicion (primitiva de lista)",lista_insertar_ultimo(lis,&b));
     print_test("insertar elemento en ultima posicion (primitiva de lista)",lista_insertar_ultimo(lis,&c));
+    print_test("insertar elemento en ultima posicion (primitiva de lista)",lista_insertar_ultimo(lis,&d));
+    print_test("insertar elemento en ultima posicion (primitiva de lista)",lista_insertar_ultimo(lis,&e));
+    print_test("insertar elemento en ultima posicion (primitiva de lista)",lista_insertar_ultimo(lis,&f));
+    int total = 0;
+    printf("se suma el total de los numeros en la lista con iterador interno\n");
+    lista_iterar(lis,suma_total,&total);
+    print_test("la suma total es correcta",total == 2907);
+    lista_destruir(lis,NULL);
 }
 
 
@@ -462,11 +500,22 @@ void prueba_interno_vacio(){
     print_test("insertar elemento en ultima posicion (primitiva de lista)",lista_insertar_ultimo(lis,&a));
     print_test("insertar elemento en ultima posicion (primitiva de lista)",lista_insertar_ultimo(lis,&b));
     print_test("insertar elemento en ultima posicion (primitiva de lista)",lista_insertar_ultimo(lis,&c));
+    printf("se utiliza una funcion para ningun elemento\n");
+    lista_iterar(lis,no_hace_nada,&c);
+    lista_iter_t* itera1 = lista_iter_crear(lis);
+    print_test("la lista mantuvo el orden",*(int*)lista_iter_ver_actual(itera1) == a);
+    (lista_iter_avanzar(itera1));
+    print_test("la lista mantuvo el orden",*(int*)lista_iter_ver_actual(itera1) == b);
+    (lista_iter_avanzar(itera1));
+    print_test("la lista mantuvo el orden",*(int*)lista_iter_ver_actual(itera1) == c);
+    (lista_iter_avanzar(itera1));
+    print_test("el iterador llega al final de la lista",lista_iter_al_final(itera1));
+    lista_iter_destruir(itera1);
+    lista_destruir(lis,NULL);
 }
 
 
 void pruebas_lista_alumno(void){
-/*
     prueba_crear_destruir();
     prueba_null_primero();
     prueba_null_ultimo();
@@ -484,9 +533,7 @@ void pruebas_lista_alumno(void){
     prueba_iterador_eliminar_primero();
     prueba_iterador_eliminar_final();
     prueba_iterador_eliminar_medio();
-*/
-
     prueba_interno_rango();
-    //prueba_interno_completo();
-    //prueba_interno_vacio();
+    prueba_interno_completo();
+    prueba_interno_vacio();
 }
