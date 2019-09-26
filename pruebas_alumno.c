@@ -5,9 +5,19 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include "pila.h"
-#define ELEMENTOS_PRUEBA_VOLUMEN 100
+#define ELEMENTOS_PRUEBA_VOLUMEN 10000
+#define A 5
 
 
+bool sumar_cinco_mostrar (void* dato,void* extra){
+    int cinco = 5;
+    if (*(size_t*) extra >= 3){
+        return false;
+    }
+    printf("%d\n", *(int*)dato + cinco);
+    *(size_t*)extra += 1;
+    return true;
+}
 
 
 bool insertar_volumen(lista_t* lista, int* vector_pruebas, bool insertar(lista_t*,void*)){
@@ -252,7 +262,211 @@ void prueba_destruir_pilas(){
     lista_destruir(lis,pila_destruir_wrapper);
 }
 
+
+void prueba_iterador_insertar_primero(){
+    printf("\nPRUEBA A INSERTAR UN ELEMENTO EN EL PRINCIPIO DE LA LISTA (I. EXTERNO)\n");
+    int a = 5;
+    int b = 12;
+    int i = 212;
+    lista_t* lis = lista_crear();
+    print_test("insertar elemento en primera posicion (primitiva de lista)",lista_insertar_primero(lis,&a));
+    print_test("insertar elemento en ultima posicion (primitiva de lista)",lista_insertar_ultimo(lis,&b));
+    lista_iter_t* itera = lista_iter_crear(lis);
+    print_test("se inserta elemento al principio con iterador",lista_iter_insertar(itera,&i));
+    print_test("el elemento en primer lugar es el insertado",*(int*)lista_iter_ver_actual(itera) == i);
+    lista_iter_avanzar(itera);
+    print_test("la lista mantuvo el orden",*(int*)lista_iter_ver_actual(itera) == a);
+    lista_iter_avanzar(itera);
+    print_test("la lista mantuvo el orden",*(int*)lista_iter_ver_actual(itera) == b);
+    print_test("final iterador",lista_iter_avanzar(itera));
+    print_test("iterador esta al final",lista_iter_al_final(itera));
+    lista_iter_destruir(itera);
+    lista_destruir(lis,NULL);
+}
+
+
+void prueba_iterador_insertar_final(){
+    printf("\nPRUEBA A INSERTAR UN ELEMENTO EN EL FINAL DE LA LISTA (I. EXTERNO)\n");
+    int a = 5;
+    int b = 12;
+    int i = 212;
+    lista_t* lis = lista_crear();
+    print_test("insertar elemento en primera posicion (primitiva de lista)",lista_insertar_primero(lis,&a));
+    print_test("insertar elemento en primera posicion (primitiva de lista)",lista_insertar_primero(lis,&b));
+    lista_iter_t* itera = lista_iter_crear(lis);
+    print_test("el iterador avanza en la lista",lista_iter_avanzar(itera));
+    print_test("el iterador avanza en la lista",lista_iter_avanzar(itera));
+    print_test("el iterador llega al final de la lista",lista_iter_al_final(itera));
+    print_test("se inserta elemento al final con iterador",lista_iter_insertar(itera,&i));
+    print_test("el iterador no esta al final de la lista",!lista_iter_al_final(itera));
+    print_test("el elemento se inserto al final",*(int*)lista_iter_ver_actual(itera) == i);
+    print_test("el iterador avanza en la lista",lista_iter_avanzar(itera));
+    print_test("el iterador llega al final de la lista",lista_iter_al_final(itera));
+    lista_iter_destruir(itera);
+    lista_destruir(lis,NULL);
+}
+
+
+void prueba_iterador_insertar_medio(){
+    printf("\nPRUEBA A INSERTAR UN ELEMENTO EN EL MEDIO DE LA LISTA (I. EXTERNO)\n");
+    int a = 5;
+    int b = 12;
+    int c = 352;
+    int d = 9999;
+    int i = 212;
+    lista_t* lis = lista_crear();
+    print_test("insertar elemento en ultima posicion (primitiva de lista)",lista_insertar_ultimo(lis,&a));
+    print_test("insertar elemento en ultima posicion (primitiva de lista)",lista_insertar_ultimo(lis,&b));
+    print_test("insertar elemento en ultima posicion (primitiva de lista)",lista_insertar_ultimo(lis,&c));
+    print_test("insertar elemento en ultima posicion (primitiva de lista)",lista_insertar_ultimo(lis,&d));
+    lista_iter_t* itera0 = lista_iter_crear(lis);
+    print_test("el iterador avanza en la lista",lista_iter_avanzar(itera0));
+    print_test("el iterador avanza en la lista",lista_iter_avanzar(itera0));
+    print_test("se inserta elemento en medio de la lista con iterador",lista_iter_insertar(itera0,&i));
+    lista_iter_destruir(itera0);
+    lista_iter_t* itera1 = lista_iter_crear(lis);
+    printf("nuevo iterador para comprobar que la lista mantuvo el orden\n");
+    print_test("la lista mantuvo el orden",*(int*)lista_iter_ver_actual(itera1) == a);
+    print_test("el iterador avanza en la lista",lista_iter_avanzar(itera1));
+    print_test("la lista mantuvo el orden",*(int*)lista_iter_ver_actual(itera1) == b);
+    print_test("el iterador avanza en la lista",lista_iter_avanzar(itera1));
+    print_test("la lista mantuvo el orden",*(int*)lista_iter_ver_actual(itera1) == i);
+    print_test("el iterador avanza en la lista",lista_iter_avanzar(itera1));
+    print_test("la lista mantuvo el orden",*(int*)lista_iter_ver_actual(itera1) == c);
+    print_test("el iterador avanza en la lista",lista_iter_avanzar(itera1));
+    print_test("la lista mantuvo el orden",*(int*)lista_iter_ver_actual(itera1) == d);
+    print_test("el iterador avanza en la lista",lista_iter_avanzar(itera1));
+    print_test("el iterador llega al final de la lista",lista_iter_al_final(itera1));
+    lista_iter_destruir(itera1);
+    lista_destruir(lis,NULL);
+
+}
+
+
+void prueba_iterador_eliminar_primero(){
+    printf("\nPRUEBA A BORRAR EL PRIMER ELEMENTO DE LA LISTA (I. EXTERNO)\n");
+    int a = 5;
+    int b = 12;
+    int c = 352;
+    lista_t* lis = lista_crear();
+    print_test("insertar elemento en ultima posicion (primitiva de lista)",lista_insertar_ultimo(lis,&a));
+    print_test("insertar elemento en ultima posicion (primitiva de lista)",lista_insertar_ultimo(lis,&b));
+    print_test("insertar elemento en ultima posicion (primitiva de lista)",lista_insertar_ultimo(lis,&c));
+    lista_iter_t* itera = lista_iter_crear(lis);
+    print_test("el elemento borrado es el primero de la lista",*(int*)lista_iter_borrar(itera) == a);
+    lista_iter_destruir(itera);
+    printf("nuevo iterador para comprobar que la lista mantuvo el orden\n");
+    lista_iter_t* itera1 = lista_iter_crear(lis);
+    print_test("la lista mantuvo el orden",*(int*)lista_iter_ver_actual(itera1) == b);
+    print_test("el iterador avanza en la lista",lista_iter_avanzar(itera1));
+    print_test("la lista mantuvo el orden",*(int*)lista_iter_ver_actual(itera1) == c);
+    print_test("el iterador avanza en la lista",lista_iter_avanzar(itera1));
+    print_test("el iterador llega al final de la lista",lista_iter_al_final(itera1));
+    lista_iter_destruir(itera1);
+    lista_destruir(lis,NULL);
+}
+
+
+void prueba_iterador_eliminar_final(){
+    printf("\nPRUEBA A BORRAR UN ELEMENTO EL FINAL DE LA LISTA (I. EXTERNO)\n");
+    int a = 5;
+    int b = 12;
+    int c = 352;
+    lista_t* lis = lista_crear();
+    print_test("insertar elemento en ultima posicion (primitiva de lista)",lista_insertar_ultimo(lis,&a));
+    print_test("insertar elemento en ultima posicion (primitiva de lista)",lista_insertar_ultimo(lis,&b));
+    print_test("insertar elemento en ultima posicion (primitiva de lista)",lista_insertar_ultimo(lis,&c));
+    lista_iter_t* itera = lista_iter_crear(lis);
+    print_test("el iterador avanza en la lista",lista_iter_avanzar(itera));
+    print_test("el iterador avanza en la lista",lista_iter_avanzar(itera));
+    print_test("el iterador esta en el ultimo elemento",*(int*)lista_iter_ver_actual(itera) == c);
+    print_test("el elemento borrado es el ultimo de la lista",*(int*)lista_iter_borrar(itera) == c);
+    lista_iter_destruir(itera);
+    printf("nuevo iterador para comprobar que la lista mantuvo el orden\n");
+    lista_iter_t* itera1 = lista_iter_crear(lis);
+    print_test("la lista mantuvo el orden",*(int*)lista_iter_ver_actual(itera1) == a);
+    print_test("el iterador avanza en la lista",lista_iter_avanzar(itera1));
+    print_test("la lista mantuvo el orden",*(int*)lista_iter_ver_actual(itera1) == b);
+    print_test("el iterador avanza en la lista",lista_iter_avanzar(itera1));
+    print_test("el iterador llega al final de la lista",lista_iter_al_final(itera1));
+    lista_iter_destruir(itera1);
+    lista_destruir(lis,NULL);
+}
+
+
+void prueba_iterador_eliminar_medio(){
+    printf("\nPRUEBA A ELIMINAR ELEMENTO EN MEDIO DE LA LISTA (I. EXTERNO)\n");
+    int a = 5;
+    int b = 12;
+    int c = 352;
+    lista_t* lis = lista_crear();
+    print_test("insertar elemento en ultima posicion (primitiva de lista)",lista_insertar_ultimo(lis,&a));
+    print_test("insertar elemento en ultima posicion (primitiva de lista)",lista_insertar_ultimo(lis,&b));
+    print_test("insertar elemento en ultima posicion (primitiva de lista)",lista_insertar_ultimo(lis,&c));
+    lista_iter_t* itera = lista_iter_crear(lis);
+    print_test("el iterador avanza en la lista",lista_iter_avanzar(itera));
+    print_test("el elemento borrado es el del medio de la lista",*(int*)lista_iter_borrar(itera) == b);
+    lista_iter_destruir(itera);
+    printf("nuevo iterador para comprobar que la lista mantuvo el orden\n");
+    lista_iter_t* itera1 = lista_iter_crear(lis);
+    print_test("la lista mantuvo el orden",*(int*)lista_iter_ver_actual(itera1) == A);
+    print_test("el iterador avanza en la lista",lista_iter_avanzar(itera1));
+    print_test("la lista mantuvo el orden",*(int*)lista_iter_ver_actual(itera1) == c);
+    print_test("el iterador avanza en la lista",lista_iter_avanzar(itera1));
+    print_test("el iterador llega al final de la lista",lista_iter_al_final(itera1));
+    lista_iter_destruir(itera1);
+    lista_destruir(lis,NULL);
+}
+
+
+void prueba_interno_rango(){
+    printf("\nPRUEBA A ELIMINAR ELEMENTO EN MEDIO DE LA LISTA (I. EXTERNO)\n");
+    int a = 5;
+    int b = 12;
+    int c = 352;
+    int d = 2431;
+    int e = 9;
+    int f = 98;
+    lista_t* lis = lista_crear();
+    print_test("insertar elemento en ultima posicion (primitiva de lista)",lista_insertar_ultimo(lis,&a));
+    print_test("insertar elemento en ultima posicion (primitiva de lista)",lista_insertar_ultimo(lis,&b));
+    print_test("insertar elemento en ultima posicion (primitiva de lista)",lista_insertar_ultimo(lis,&c));
+    print_test("insertar elemento en ultima posicion (primitiva de lista)",lista_insertar_ultimo(lis,&d));
+    print_test("insertar elemento en ultima posicion (primitiva de lista)",lista_insertar_ultimo(lis,&e));
+    print_test("insertar elemento en ultima posicion (primitiva de lista)",lista_insertar_ultimo(lis,&f));
+    size_t limite = 0;
+    printf("uso de funcion en iterador interno\n");
+    lista_iterar(lis,sumar_cinco_mostrar,&limite);
+    lista_destruir(lis,NULL);
+}
+
+
+void prueba_interno_completo(){
+    printf("\nPRUEBA A ELIMINAR ELEMENTO EN MEDIO DE LA LISTA (I. EXTERNO)\n");
+    int a = 5;
+    int b = 12;
+    int c = 352;
+    lista_t* lis = lista_crear();
+    print_test("insertar elemento en ultima posicion (primitiva de lista)",lista_insertar_ultimo(lis,&a));
+    print_test("insertar elemento en ultima posicion (primitiva de lista)",lista_insertar_ultimo(lis,&b));
+    print_test("insertar elemento en ultima posicion (primitiva de lista)",lista_insertar_ultimo(lis,&c));
+}
+
+
+void prueba_interno_vacio(){
+    printf("\nPRUEBA A ELIMINAR ELEMENTO EN MEDIO DE LA LISTA (I. EXTERNO)\n");
+    int a = 5;
+    int b = 12;
+    int c = 352;
+    lista_t* lis = lista_crear();
+    print_test("insertar elemento en ultima posicion (primitiva de lista)",lista_insertar_ultimo(lis,&a));
+    print_test("insertar elemento en ultima posicion (primitiva de lista)",lista_insertar_ultimo(lis,&b));
+    print_test("insertar elemento en ultima posicion (primitiva de lista)",lista_insertar_ultimo(lis,&c));
+}
+
+
 void pruebas_lista_alumno(void){
+/*
     prueba_crear_destruir();
     prueba_null_primero();
     prueba_null_ultimo();
@@ -264,4 +478,15 @@ void pruebas_lista_alumno(void){
     prueba_destruir_pilas();
     prueba_volumen_primero();
     prueba_volumen_ultimo();
+    prueba_iterador_insertar_primero();
+    prueba_iterador_insertar_final();
+    prueba_iterador_insertar_medio();
+    prueba_iterador_eliminar_primero();
+    prueba_iterador_eliminar_final();
+    prueba_iterador_eliminar_medio();
+*/
+
+    prueba_interno_rango();
+    //prueba_interno_completo();
+    //prueba_interno_vacio();
 }

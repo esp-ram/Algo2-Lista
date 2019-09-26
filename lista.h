@@ -8,6 +8,11 @@
 struct lista;
 typedef struct lista lista_t;
 
+typedef struct lista_iter lista_iter_t;
+
+
+//// PRIMITIVAS DE LISTA ENLAZADA ////
+
 
 // Crea una lista.
 // Post: devuelve una nueva lista vacía.
@@ -67,6 +72,60 @@ void* lista_borrar_primero(lista_t *lista);
 // Pre: la lista fue creada.
 // Post: se devolvio el largo de la lista.
 size_t lista_largo(const lista_t *lista);
+
+
+//// PRIMITIVAS DE ITERADOR EXTERNO ////
+
+
+// Crea un iterador de la lista que se pasa por parametro.
+// Pre: la lista fue creada.
+// Post: el iterador de la lista fue creado.
+lista_iter_t *lista_iter_crear(lista_t *lista);
+
+
+// El iterador avanza a la posicion siguiente, devuelve false si se encuentra en al final.
+// Pre: tanto la lista como el iterador fueron creados.
+// Post: el iterador avanzo al siguiente elemento de la lista (devolvio true) o devolvio false si ya se encuentra al final.
+bool lista_iter_avanzar(lista_iter_t *iter);
+
+
+// El iterador devuelve el  elemento actual.
+// Pre: tanto la lista como el iterador fueron creados.
+// Post: el iterador devolvio el elemento actual o NULL si se encuentra al final.
+void *lista_iter_ver_actual(const lista_iter_t *iter);
+
+
+// Indica con true o false si el iterador se encuentra al final.
+// Pre: tanto la lista como el iterador fueron creados.
+// Post: devuelve true si el iterador llego al final de la lista o false si todavia
+// no esta en el final.
+bool lista_iter_al_final(const lista_iter_t *iter);
+
+
+// El iterador borra el elemento "actual" y se devuelve.
+// Pre: tanto la lista como el iterador fueron creados.
+// Post: se borra el elemento de la lista, se devuelve y la longitud de la lista
+// disminuye en uno.
+void *lista_iter_borrar(lista_iter_t *iter);
+
+
+// Se inserta un elemento en la posicion actual del iterador.
+// Pre: tanto la lista como el iterador fueron creados.
+// Post: el elemento se inserto en la posicion del actual, la longitud de la lista
+// se incrementa en uno.
+bool lista_iter_insertar(lista_iter_t *iter, void *dato);
+
+
+// Se elimina el iterador.
+// Pre: el iterador fue creado.
+// Post: el iterador fue destruido
+void lista_iter_destruir(lista_iter_t *iter);
+
+
+
+
+//// PRIMITIVA DE ITERADOR INTERNO ////
+void lista_iterar(lista_t *lista, bool visitar(void *dato, void *extra), void *extra);
 
 
 
