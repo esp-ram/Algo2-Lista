@@ -6,7 +6,6 @@
 #include <stdlib.h>
 #include "pila.h"
 #define ELEMENTOS_PRUEBA_VOLUMEN 10000
-#define A 5
 
 
 bool no_hace_nada(void* dato, void* extra){
@@ -515,6 +514,18 @@ void prueba_interno_vacio(){
 }
 
 
+void prueba_iterador_vacia(){
+    printf("\nPRUEBA ITERADOR EXTERNO CON LISTA VACIA\n");
+    lista_t* lis = lista_crear();
+    lista_iter_t* itera = lista_iter_crear(lis);
+    print_test("ver actual de lista vacia",lista_iter_ver_actual(itera) == NULL);
+    print_test("avanzar en la lista",!lista_iter_avanzar(itera));
+    print_test("el iterador esta al final",lista_iter_al_final(itera));
+    lista_iter_destruir(itera);
+    lista_destruir(lis,NULL);
+}
+
+
 void pruebas_lista_alumno(void){
     prueba_crear_destruir();
     prueba_null_primero();
@@ -536,4 +547,5 @@ void pruebas_lista_alumno(void){
     prueba_interno_rango();
     prueba_interno_completo();
     prueba_interno_vacio();
+    prueba_iterador_vacia();
 }

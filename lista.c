@@ -154,7 +154,10 @@ bool lista_iter_avanzar(lista_iter_t *iter){
 
 
 void *lista_iter_ver_actual(const lista_iter_t *iter){
-    return (iter->actual->dato);
+    if (iter->actual != NULL){
+        return (iter->actual->dato);
+    }
+    return NULL;
 }
 
 
@@ -164,9 +167,15 @@ bool lista_iter_al_final(const lista_iter_t *iter){
 
 
 void *lista_iter_borrar(lista_iter_t *iter){
+    if (iter->actual == NULL){
+        return NULL;
+    }
     void* dato_devolver = iter->actual->dato;
     nodo_t* nodo_a_borrar = iter->actual;
-    if (iter->anterior == NULL){
+    if (iter->anterior == NULL && iter->actual->proximo == NULL){
+        iter->lista->primero = NULL;
+        iter->lista->ultimo = NULL;
+    }else if (iter->anterior == NULL){
         iter->lista->primero = iter->actual->proximo;
     }else if (iter->actual->proximo == NULL){
         iter->anterior->proximo = iter->actual->proximo;
@@ -175,6 +184,7 @@ void *lista_iter_borrar(lista_iter_t *iter){
         iter->anterior->proximo = iter->actual->proximo;
     }
     iter->actual = iter->actual->proximo;
+    iter->lista->largo -= 1;
     free(nodo_a_borrar);
     return dato_devolver;
 }
@@ -185,7 +195,10 @@ bool lista_iter_insertar(lista_iter_t *iter, void *dato){
     if (a_insertar == NULL){
         return false;
     }
-    if (iter->anterior == NULL){
+    if (iter->anterior == NULL && iter->actual == NULL){
+        iter->lista->primero = a_insertar;
+        iter->lista->ultimo = a_insertar;
+    }else if (iter->anterior == NULL){
         a_insertar->proximo = iter->actual;
         iter->lista->primero = a_insertar;
     }else if (iter->actual == NULL){
@@ -197,6 +210,7 @@ bool lista_iter_insertar(lista_iter_t *iter, void *dato){
         a_insertar->proximo = iter->actual;
     }
     iter->actual = a_insertar;
+    iter->lista->largo += 1;
     return true;
 }
 
